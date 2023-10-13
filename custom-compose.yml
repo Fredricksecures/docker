@@ -1,0 +1,36 @@
+version: "3.8"  # Use the latest version of the Docker Compose file format
+
+services:
+  webapp:
+    image: my-webapp:latest  # Use a specific version tag for images
+    container_name: my-webapp-container  # Set a custom container name
+    ports:
+      - "80:80"  # Map host port 80 to container port 80
+    networks:
+      - my-network  # Attach to a custom Docker network
+    volumes:
+      - ./app:/app  # Mount a host directory into the container
+    environment:
+      - NODE_ENV=production  # Set environment variables
+    restart: unless-stopped  # Configure container restart policy
+    depends_on:
+      - database  # Define service dependencies
+
+  database:
+    image: postgres:13  # Use a specific version of a database image
+    container_name: db-container
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Use named volumes for data persistence
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge  # Use a custom bridge network for services
+
+volumes:
+  db-data:  # Define named volumes for data persistence
